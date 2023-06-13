@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-
+.idea
 # testing
 /coverage
 
@@ -33,3 +33,42 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+node_modules/
+
+# testing
+coverage/
+cycoverage/
+
+# e2e testing
+cypress.env.json
+cypress/tmp
+cypress/videos
+cypress/screenshots
+cypress/downloads
+
+# production
+build/
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+.env*
+.vscode
+package-lock.json
+*.iml
+
+.nyc_output/
+
+.fileHashes.json
+
