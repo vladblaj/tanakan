@@ -1,8 +1,9 @@
 "use client";
 import React, {useEffect, useState} from "react";
 import {useSession} from "@clerk/nextjs";
-import {supabaseClient} from "@/api/utils";
 import {AddTodoForm} from "@/components/AddTodoForm";
+import {post} from ".prisma/client";
+import {supabaseClient} from "@/api/utils";
 
 export default function Test() {
   const {session} = useSession();
@@ -15,17 +16,21 @@ export default function Test() {
   }[]>();
   useEffect(() => {
     const loadTodos = async () => {
-      debugger;
 
       try {
         setLoading(true);
-        const supabaseAccessToken = await session?.getToken({
+        if (!session) {
+          return;
+        }
+        const supabaseAccessToken = await session.getToken({
           template: "supabase",
         });
-
-        const supabase = await supabaseClient(supabaseAccessToken || "");
-        const {data: todos} = await supabase.from("todos").select("*");
-        console.log(todos)
+        if (!supabaseAccessToken) {
+          return;
+        }
+        const supabase = await supabaseClient(supabaseAccessToken);
+        const {data: todos} = await supabase.from("post").select("*");
+        debugger;
         if (todos) {
           setTodos(todos);
         }

@@ -1,0 +1,4 @@
+supabase gen types typescript --project-id pklgijiwvyywpsaxqpou --schema public > src/types/supabase.ts
+npx prisma db pull 
+npx prisma generate face din baza de date in program
+npx prisma migrate dev --name added_test_field face din program in baza de date

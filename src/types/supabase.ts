@@ -9,24 +9,60 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      todos: {
+      _prisma_migrations: {
         Row: {
-          created_at: string | null
-          id: number
-          title: string | null
-          user_id: string | null
+          applied_steps_count: number
+          checksum: string
+          finished_at: string | null
+          id: string
+          logs: string | null
+          migration_name: string
+          rolled_back_at: string | null
+          started_at: string
         }
         Insert: {
-          created_at?: string | null
-          id?: number
-          title?: string | null
-          user_id?: string | null
+          applied_steps_count?: number
+          checksum: string
+          finished_at?: string | null
+          id: string
+          logs?: string | null
+          migration_name: string
+          rolled_back_at?: string | null
+          started_at?: string
         }
         Update: {
-          created_at?: string | null
+          applied_steps_count?: number
+          checksum?: string
+          finished_at?: string | null
+          id?: string
+          logs?: string | null
+          migration_name?: string
+          rolled_back_at?: string | null
+          started_at?: string
+        }
+        Relationships: []
+      }
+      post: {
+        Row: {
+          created_at: string
+          id: number
+          testField: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
           id?: number
-          title?: string | null
-          user_id?: string | null
+          testField: string
+          title: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          testField?: string
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }

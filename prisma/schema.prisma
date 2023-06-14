@@ -1,0 +1,19 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DIRECT_URL")
+}
+
+model post {
+  id         Int      @id @default(autoincrement())
+  title      String
+  user_id    String   @default(dbgenerated("requesting_user_id()"))
+  created_at DateTime @default(now())
+  testField  String
+}
