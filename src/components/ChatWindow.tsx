@@ -11,10 +11,7 @@ export const ChatWindow = () => {
 
   const { userId } = useAuth();
   useEffect(() => {
-    console.log("useEffect din chat window", messageChannel);
-
     messageChannel?.on("broadcast", { event: "supa" }, (data) => {
-      console.log("data", data);
       setMessages((messages) => [
         ...messages,
         {

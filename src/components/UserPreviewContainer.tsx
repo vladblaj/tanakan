@@ -1,6 +1,9 @@
-import { PropsWithChildren } from "react";
+"use client";
+import useTanakanStore from "@/store";
+import { OnlineUser } from "@/components/OnlineUser";
 
-export const ChatPreviewContainer = ({ children }: PropsWithChildren) => {
+export const UserPreviewContainer = () => {
+  const { onlineUsers } = useTanakanStore();
   return (
     <div className="border-r border-gray-300 lg:col-span-1">
       <div className="mx-3 my-3">
@@ -27,8 +30,18 @@ export const ChatPreviewContainer = ({ children }: PropsWithChildren) => {
           />
         </div>
       </div>
-      <h2 className="my-2 mb-2 ml-2 text-lg text-gray-600">Chats</h2>
-      <ul className="overflow-auto h-[32rem]">{children}</ul>
+      <h2 className="my-2 mb-2 ml-2 text-lg text-gray-600">Users</h2>
+      <ul className="overflow-auto h-[32rem]">
+        {onlineUsers.map((user, key) => (
+          <OnlineUser
+            key={key}
+            name={user.name}
+            lastSeen={user.online_at}
+            message=""
+            avatar={user.avatar}
+          />
+        ))}
+      </ul>
     </div>
   );
 };

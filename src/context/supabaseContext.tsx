@@ -10,9 +10,11 @@ import {
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/types/supabase";
 import { Await } from "@/api/utils";
-import { useSession } from "@clerk/nextjs";
+import { useSession, useUser } from "@clerk/nextjs";
 import Loading from "@/app/loading";
 import { RealtimeChannel } from "@supabase/realtime-js";
+import { SupaUser } from "@/types/tanakan";
+import useTanakanStore from "@/store";
 
 export type SupabaseClientType = Await<ReturnType<typeof getSupabaseClient>>;
 
@@ -43,10 +45,10 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
   const [client, setClient] = useState<SupabaseClientType>();
   const [messageChannel, setMessageChannel] = useState<RealtimeChannel>();
   const { session, isLoaded } = useSession();
-
+  const { user } = useUser();
+  const { addUser, removeUserById } = useTanakanStore();
   const setSupabaseClient = useCallback(async () => {
     if (!isLoaded) {
-      console.log("1 Useffect");
       return;
     }
 
@@ -69,6 +71,7 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
     if (messageChannel || !client || !isLoaded) {
       return;
     }
+    console.log("SEEEE EXECUTA");
     const channel = client
       ?.channel("test", {
         config: {
@@ -77,9 +80,28 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
           },
         },
       })
-      .subscribe();
+      .on("presence", { event: "sync" }, () => {
+        const state = channel.presenceState();
+      })
+      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+        addUser(newPresences[0] as SupaUser);
+        console.log("joined", newPresences);
+      })
+      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+        removeUserById(key);
+      })
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
+          await channel.track({
+            user: user?.id,
+            name: user?.fullName,
+            avatar: user?.imageUrl,
+            online_at: new Date().toISOString(),
+          });
+        }
+      });
     setMessageChannel(channel);
-  }, [client, isLoaded, messageChannel]);
+  }, [addUser, client, isLoaded, messageChannel, removeUserById, user]);
 
   if (!client) {
     return <Loading />;

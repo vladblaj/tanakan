@@ -8,13 +8,11 @@ export const ChatControls = () => {
   const { userId } = useAuth();
   const [message, setMessage] = useState("");
   const sendMessage = async (text: string) => {
-    console.log("se trimite", text);
     messageChannel?.send({
       type: "broadcast",
       event: "supa",
       payload: { text, userId },
     });
-    console.log(status);
   };
 
   return (
