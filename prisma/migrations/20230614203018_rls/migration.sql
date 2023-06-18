@@ -1,0 +1,2 @@
+ALTER TABLE "post" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "post" FORCE ROW LEVEL SECURITY;-- This is an empty migration.

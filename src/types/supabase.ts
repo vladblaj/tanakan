@@ -42,6 +42,89 @@ export interface Database {
         }
         Relationships: []
       }
+      Chat: {
+        Row: {
+          createdAt: string
+          id: number
+        }
+        Insert: {
+          createdAt?: string
+          id?: number
+        }
+        Update: {
+          createdAt?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      ChatsUsers: {
+        Row: {
+          chatId: number
+          id: number
+          userId: string
+        }
+        Insert: {
+          chatId: number
+          id?: number
+          userId: string
+        }
+        Update: {
+          chatId?: number
+          id?: number
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ChatsUsers_chatId_fkey"
+            columns: ["chatId"]
+            referencedRelation: "Chat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ChatsUsers_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      Message: {
+        Row: {
+          chatId: number
+          createdAt: string
+          id: number
+          text: string
+          userId: string
+        }
+        Insert: {
+          chatId: number
+          createdAt?: string
+          id?: number
+          text: string
+          userId: string
+        }
+        Update: {
+          chatId?: number
+          createdAt?: string
+          id?: number
+          text?: string
+          userId?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Message_chatId_fkey"
+            columns: ["chatId"]
+            referencedRelation: "Chat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "Message_userId_fkey"
+            columns: ["userId"]
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       post: {
         Row: {
           created_at: string
@@ -63,6 +146,27 @@ export interface Database {
           testField?: string
           title?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      User: {
+        Row: {
+          createdAt: string
+          email: string
+          id: string
+          name: string
+        }
+        Insert: {
+          createdAt?: string
+          email: string
+          id?: string
+          name: string
+        }
+        Update: {
+          createdAt?: string
+          email?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }

@@ -17,3 +17,38 @@ model post {
   created_at DateTime @default(now())
   testField  String
 }
+
+model Chat {
+  id         Int          @id @default(autoincrement())
+  createdAt  DateTime     @default(now())
+  ChatsUsers ChatsUsers[]
+  Message    Message[]
+}
+
+model User {
+  id         String       @id @default(dbgenerated("requesting_user_id()"))
+  createdAt  DateTime     @default(now())
+  name       String
+  email      String
+  ChatsUsers ChatsUsers[]
+  Message    Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  text      String   @db.VarChar(255)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    Int
+}
+
+model ChatsUsers {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  chat   Chat @relation(fields: [chatId], references: [id])
+  chatId Int
+}
