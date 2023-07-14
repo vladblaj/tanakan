@@ -9,7 +9,7 @@ import {
 } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "@/types/supabase";
-import { Await } from "@/api/utils";
+import { Await, getUniqueUsers } from "@/utils/utils";
 import { useSession, useUser } from "@clerk/nextjs";
 import Loading from "@/app/loading";
 import { RealtimeChannel } from "@supabase/realtime-js";
@@ -44,13 +44,14 @@ const supabaseContextProvider = createContext<SupabaseContextType>({
 export const SupabaseProvider = ({ children }: PropsWithChildren) => {
   const [client, setClient] = useState<SupabaseClientType>();
   const [messageChannel, setMessageChannel] = useState<RealtimeChannel>();
-  const { session, isLoaded } = useSession();
+  const { session, isSignedIn, isLoaded } = useSession();
   const { user } = useUser();
-  const { addUser, removeUserById } = useTanakanStore();
+  const { setUsers, addUser, removeUserById } = useTanakanStore();
   const setSupabaseClient = useCallback(async () => {
-    if (!isLoaded) {
+    if (!isSignedIn) {
       return;
     }
+    console.log("rendering supabase provider", session?.status);
 
     const accessToken = await session?.getToken({
       template: "supabase",
@@ -61,7 +62,7 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
     const supabase = await getSupabaseClient(accessToken);
 
     setClient(supabase);
-  }, [session, isLoaded]);
+  }, [isSignedIn, session]);
 
   useEffect(() => {
     setSupabaseClient();
@@ -71,7 +72,6 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
     if (messageChannel || !client || !isLoaded) {
       return;
     }
-    console.log("SEEEE EXECUTA");
     const channel = client
       ?.channel("test", {
         config: {
@@ -82,10 +82,10 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
       })
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
+        setUsers(getUniqueUsers(state));
       })
       .on("presence", { event: "join" }, ({ key, newPresences }) => {
         addUser(newPresences[0] as SupaUser);
-        console.log("joined", newPresences);
       })
       .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
         removeUserById(key);
@@ -93,7 +93,7 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           await channel.track({
-            user: user?.id,
+            userId: user?.id,
             name: user?.fullName,
             avatar: user?.imageUrl,
             online_at: new Date().toISOString(),
@@ -101,7 +101,15 @@ export const SupabaseProvider = ({ children }: PropsWithChildren) => {
         }
       });
     setMessageChannel(channel);
-  }, [addUser, client, isLoaded, messageChannel, removeUserById, user]);
+  }, [
+    addUser,
+    client,
+    isLoaded,
+    messageChannel,
+    removeUserById,
+    setUsers,
+    user,
+  ]);
 
   if (!client) {
     return <Loading />;

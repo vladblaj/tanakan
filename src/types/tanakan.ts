@@ -5,3 +5,9 @@ export type SupaUser = {
   avatar: string;
   online_at: string;
 };
+
+export type UserKeys = {
+  username: string;
+  publicKey: string;
+  privateKey: string;
+};

@@ -20,7 +20,9 @@ model post {
 
 model Chat {
   id         Int          @id @default(autoincrement())
+  name       String
   createdAt  DateTime     @default(now())
+  publicKey  String       @db.VarChar(1024)
   ChatsUsers ChatsUsers[]
   Message    Message[]
 }
@@ -32,6 +34,7 @@ model User {
   email      String
   ChatsUsers ChatsUsers[]
   Message    Message[]
+  publicKey  String       @db.VarChar(1024) @default("")
 }
 
 model Message {

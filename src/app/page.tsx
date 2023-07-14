@@ -1,4 +1,3 @@
-import { OnlineUser } from "@/components/OnlineUser";
 import { UserPreviewContainer } from "@/components/UserPreviewContainer";
 import { ChatWindow } from "@/components/ChatWindow";
 

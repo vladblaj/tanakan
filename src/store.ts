@@ -6,6 +6,7 @@ import { immer } from "zustand/middleware/immer";
 type TanakanStore = {
   onlineUsers: SupaUser[];
   addUser: (user: SupaUser) => void;
+  setUsers: (users: SupaUser[]) => void;
   removeUserById: (id: string) => void;
 };
 
@@ -24,6 +25,10 @@ export const useTanakanStore = create<TanakanStore>()(
           state.onlineUsers = state.onlineUsers.filter(
             (u) => u.userId !== userId
           );
+        }),
+      setUsers: (users: SupaUser[]) =>
+        set((state: TanakanStore) => {
+          state.onlineUsers = users;
         }),
     })),
     {

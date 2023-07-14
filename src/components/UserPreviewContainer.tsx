@@ -1,9 +1,61 @@
 "use client";
 import useTanakanStore from "@/store";
 import { OnlineUser } from "@/components/OnlineUser";
+import { useCallback, useEffect } from "react";
+import { generateKeys } from "@/utils/generateKeys";
+import { useAuth } from "@clerk/nextjs";
+import useSWR, { Fetcher, mutate } from "swr";
+import useSWRMutation, { MutationFetcher } from "swr/mutation";
+import { User } from ".prisma/client";
 
+// Fetcher implementation.
+// The extra argument will be passed via the `arg` property of the 2nd parameter.
+// In the example below, `arg` will be `'my_token'`
+const updateUser: MutationFetcher<User, string> = (url, data) =>
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify(data.arg),
+  }).then((res) => res.json());
+const getUserById: Fetcher<User, string> = (url) =>
+  fetch(url).then((res) => res.json());
+const parameters = {
+  revalidateOnFocus: false,
+  revalidateOnMount: false,
+  revalidateOnReconnect: false,
+  refreshWhenOffline: false,
+  refreshWhenHidden: false,
+  refreshInterval: 0,
+};
 export const UserPreviewContainer = () => {
+  const { trigger } = useSWRMutation("/api/user", updateUser);
+  const { data } = useSWR(() => "/api/user", getUserById, parameters);
   const { onlineUsers } = useTanakanStore();
+  const { userId } = useAuth();
+
+  const setUserKeys = useCallback(async () => {
+    if (!userId || !data) {
+      console.log("user not found");
+      return;
+    }
+
+    if (data) {
+      await mutate("/api/user", data, false);
+    }
+
+    const lsKeys = localStorage.getItem(`${userId}-keys`);
+
+    if (!lsKeys || data?.publicKey !== JSON.parse(lsKeys).publicKey) {
+      console.log("keys don't match");
+      const keyArray = await generateKeys(userId, 4096);
+      localStorage.setItem(`${userId}-keys`, JSON.stringify(keyArray));
+      await trigger({ publicKey: keyArray.publicKey });
+      return;
+    }
+  }, [data, trigger, userId]);
+
+  useEffect(() => {
+    setUserKeys();
+  }, [setUserKeys]);
   return (
     <div className="border-r border-gray-300 lg:col-span-1">
       <div className="mx-3 my-3">

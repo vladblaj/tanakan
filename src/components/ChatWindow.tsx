@@ -27,7 +27,7 @@ export const ChatWindow = () => {
     <div className="hidden lg:col-span-2 lg:block">
       <div className="w-full">
         <div className="relative flex items-center p-3 border-b border-gray-300">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton afterSignOutUrl="/sign-in" />
         </div>
         <div className="relative w-full p-6 overflow-y-auto h-[40rem]">
           <ul className="space-y-2">
