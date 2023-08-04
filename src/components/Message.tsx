@@ -1,14 +1,14 @@
 import cx from "classnames";
-import { useUser } from "@clerk/nextjs";
 import moment from "moment";
 
 export type MessageProps = {
-  text: string;
+  from: string;
   fromMe?: boolean;
+  avatarUrl: string;
+  text: string;
   userId: string;
 };
-export const Message = ({ text, fromMe }: MessageProps) => {
-  const { user } = useUser();
+export const Message = ({ text, fromMe, from, avatarUrl }: MessageProps) => {
   return (
     <li
       className={cx(
@@ -22,11 +22,11 @@ export const Message = ({ text, fromMe }: MessageProps) => {
       >
         <div className="chat-image avatar">
           <div className="w-10 rounded-full">
-            <img src={user?.imageUrl} />
+            <img src={avatarUrl} />
           </div>
         </div>
         <div className="chat-header">
-          {user?.fullName}{" "}
+          {from}{" "}
           <time className="text-xs opacity-50">{moment().format("h:mm")}</time>
         </div>
         <div

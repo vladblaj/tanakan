@@ -1,17 +1,22 @@
 "use client";
 import { useSupabaseClient } from "@/context/supabaseContext";
 import { useState } from "react";
-import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 export const ChatControls = () => {
   const { messageChannel } = useSupabaseClient();
-  const { userId } = useAuth();
+  const { user } = useUser();
   const [message, setMessage] = useState("");
   const sendMessage = async (text: string) => {
     messageChannel?.send({
       type: "broadcast",
       event: "supa",
-      payload: { text, userId },
+      payload: {
+        text,
+        userId: user?.id,
+        from: user?.fullName,
+        avatarUrl: user?.imageUrl,
+      },
     });
   };
 

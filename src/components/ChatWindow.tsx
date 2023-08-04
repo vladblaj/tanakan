@@ -15,9 +15,11 @@ export const ChatWindow = () => {
       setMessages((messages) => [
         ...messages,
         {
+          from: data.payload.from,
+          fromMe: data.payload.userId === userId,
+          avatarUrl: data.payload.avatarUrl,
           text: data.payload.text,
           userId: data.payload.userId,
-          fromMe: data.payload.userId === userId,
         },
       ]);
     });
@@ -25,17 +27,19 @@ export const ChatWindow = () => {
 
   return (
     <div className="lg:col-span-2 lg:block">
-      <div className="w-full">
-        <div className="relative flex items-center p-3 border-b border-secondary">
+      <div className="flex flex-col w-full h-screen">
+        <div className="flex items-center p-3 border-b border-secondary">
           <UserButton afterSignOutUrl="/sign-in" />
         </div>
-        <div className="relative w-full p-6 overflow-y-auto h-[33rem]">
+        <div className="relative w-ful flex-grow p-6 overflow-y-auto">
           <ul className="space-y-2">
             {messages.map((message, i) => (
               <Message
                 key={i}
-                text={message.text}
+                from={message.from}
                 fromMe={message.fromMe}
+                avatarUrl={message.avatarUrl}
+                text={message.text}
                 userId={message.userId}
               />
             ))}
