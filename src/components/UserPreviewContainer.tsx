@@ -1,12 +1,12 @@
 "use client";
 import useTanakanStore from "@/store";
 import { OnlineUser } from "@/components/OnlineUser";
-import { useCallback, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { generateKeys } from "@/utils/generateKeys";
 import { useAuth } from "@clerk/nextjs";
 import useSWR, { Fetcher, mutate } from "swr";
 import useSWRMutation, { MutationFetcher } from "swr/mutation";
-import { User } from ".prisma/client";
+import { User } from ".prisma/client"; // Fetcher implementation.
 
 // Fetcher implementation.
 // The extra argument will be passed via the `arg` property of the 2nd parameter.
@@ -31,7 +31,7 @@ export const UserPreviewContainer = () => {
   const { data } = useSWR(() => "/api/user", getUserById, parameters);
   const { onlineUsers } = useTanakanStore();
   const { userId } = useAuth();
-
+  const [searchInput, setSearchInput] = useState("");
   const setUserKeys = useCallback(async () => {
     if (!userId || !data) {
       console.log("user not found");
@@ -53,8 +53,14 @@ export const UserPreviewContainer = () => {
     }
   }, [data, trigger, userId]);
 
+  const filteredUsers = searchInput
+    ? onlineUsers.filter((user) => {
+        return user.name.toLowerCase().includes(searchInput.toLowerCase());
+      })
+    : onlineUsers;
+
   return (
-    <div className="border-r border-gray-300 lg:col-span-1">
+    <div className=" hidden md:block border-r border-secondary lg:col-span-1">
       <div className="mx-3 my-3">
         <div className="relative text-gray-600">
           <span className="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -76,12 +82,14 @@ export const UserPreviewContainer = () => {
             name="search"
             placeholder="Search"
             required
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
       </div>
       <h2 className="my-2 mb-2 ml-2 text-lg text-gray-600">Users</h2>
       <ul className="overflow-auto h-[32rem]">
-        {onlineUsers.map((user, key) => (
+        {filteredUsers.map((user, key) => (
           <OnlineUser
             key={key}
             name={user.name}

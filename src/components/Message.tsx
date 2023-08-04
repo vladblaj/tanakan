@@ -1,4 +1,6 @@
 import cx from "classnames";
+import { useUser } from "@clerk/nextjs";
+import moment from "moment";
 
 export type MessageProps = {
   text: string;
@@ -6,21 +8,36 @@ export type MessageProps = {
   userId: string;
 };
 export const Message = ({ text, fromMe }: MessageProps) => {
+  const { user } = useUser();
   return (
     <li
       className={cx(
         "flex justify-start",
-        fromMe && "justify-end",
-        !fromMe && "justify-start"
+        fromMe && "justify-end ",
+        !fromMe && "justify-start "
       )}
     >
       <div
-        className={cx(
-          "relative max-w-xl px-4 py-2 text-gray-700 rounded shadow",
-          fromMe && "bg-gray-100"
-        )}
+        className={cx("chat", fromMe && "chat-end", !fromMe && "chat-start")}
       >
-        <span className="block">{text}</span>
+        <div className="chat-image avatar">
+          <div className="w-10 rounded-full">
+            <img src={user?.imageUrl} />
+          </div>
+        </div>
+        <div className="chat-header">
+          {user?.fullName}{" "}
+          <time className="text-xs opacity-50">{moment().format("h:mm")}</time>
+        </div>
+        <div
+          className={cx(
+            "chat-bubble chat-bubble-primary",
+            fromMe && "chat-bubble-primary",
+            !fromMe && "chat-bubble-secondary"
+          )}
+        >
+          {text}
+        </div>
       </div>
     </li>
   );

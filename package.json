@@ -26,6 +26,7 @@
     "immer": "^10.0.2",
     "jsencrypt": "^3.3.2",
     "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "next": "^13.4.9",
     "pbkdf2": "^3.1.2",
     "postcss": "8.4.24",
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.195",
     "@types/pbkdf2": "^3.1.0",
+    "daisyui": "latest",
     "encoding": "^0.1.13"
   },
   "packageManager": "yarn@3.6.0"
