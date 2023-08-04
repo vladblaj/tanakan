@@ -53,9 +53,6 @@ export const UserPreviewContainer = () => {
     }
   }, [data, trigger, userId]);
 
-  useEffect(() => {
-    setUserKeys();
-  }, [setUserKeys]);
   return (
     <div className="border-r border-gray-300 lg:col-span-1">
       <div className="mx-3 my-3">
