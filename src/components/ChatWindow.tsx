@@ -29,7 +29,7 @@ export const ChatWindow = () => {
         <div className="relative flex items-center p-3 border-b border-secondary">
           <UserButton afterSignOutUrl="/sign-in" />
         </div>
-        <div className="relative w-full p-6 overflow-y-auto h-[40rem]">
+        <div className="relative w-full p-6 overflow-y-auto h-[33rem]">
           <ul className="space-y-2">
             {messages.map((message, i) => (
               <Message
