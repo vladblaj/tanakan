@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN     "publicKey" VARCHAR(1024) NOT NULL DEFAULT '';
